@@ -1,7 +1,7 @@
 #include <linux/kernel.h>
 #include <linux/module.h>
 
-#include "kernel_functions.h"
+#include "kernel_variables.h"
 #include "syscall.h"
 
 int sys_call_table_pte_perm;
@@ -12,7 +12,7 @@ int set_addr_rw(unsigned long addr)
   int result;
 
   // Get the page table entry
-  pte_t* pte = fn_lookup_address(addr, &level);
+  pte_t* pte = lookup_address(addr, &level);
 
   // Save the permissions
   result = pte->pte;
@@ -29,7 +29,7 @@ void set_pte_permissions(unsigned long addr, int perm)
   unsigned int level;
 
   // Get the page table entry
-  pte_t* pte = fn_lookup_address(addr, &level);
+  pte_t* pte = lookup_address(addr, &level);
 
   // Set the new permissions
   pte->pte = perm;
@@ -37,11 +37,10 @@ void set_pte_permissions(unsigned long addr, int perm)
 
 inline void syscall_table_modify_begin(void)
 {
-  sys_call_table = (void*) rk_sys_call_table;
-  sys_call_table_pte_perm = set_addr_rw((unsigned long) sys_call_table);
+  sys_call_table_pte_perm = set_addr_rw((unsigned long) get_syscall_table_addr());
 }
 
 inline void syscall_table_modify_end(void)
 {
-  set_pte_permissions((unsigned long) sys_call_table, sys_call_table_pte_perm);
+  set_pte_permissions((unsigned long) get_syscall_table_addr(), sys_call_table_pte_perm);
 }

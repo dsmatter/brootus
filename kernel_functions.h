@@ -9,7 +9,6 @@
 
 #define KFUN(name) fn_##name = (void*) rk_##name
 
-extern pte_t* (*fn_lookup_address)(unsigned long address, unsigned int* level);
 extern int (*fn_sysfs_remove_dir)(struct kobject*);
 extern struct sock* (*fn_netlink_lookup)(struct net*, int, u32);
 extern unsigned long (*fn_kallsyms_lookup_name)(const char*);

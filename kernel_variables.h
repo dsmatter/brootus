@@ -5,8 +5,9 @@
 
 #define KVAR(type, name) type name = (type) rk_##name
 
-extern void** sys_call_table;
 extern struct list_head* modules;
 extern struct proc_dir_entry* proc_root;
+
+extern void** get_syscall_table_addr(void);
 
 #endif

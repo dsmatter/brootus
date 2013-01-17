@@ -13,6 +13,8 @@
  * Functions
  */
 
+extern int set_addr_rw(unsigned long addr);
+extern void set_pte_permissions(unsigned long addr, int perm);
 extern void syscall_table_modify_begin(void);
 extern void syscall_table_modify_end(void);
 

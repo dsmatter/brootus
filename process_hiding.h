@@ -1,5 +1,5 @@
 #ifndef PROCESS_HIDING_H
-#define PROCESS_HIDING_H value
+#define PROCESS_HIDING_H
 
 #include "brootus.h"
 

